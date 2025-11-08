@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Google — Compte suspendu</title>
+<style>
+  :root{
+    --bg:#f3f4f6;
+    --card:#fff;
+    --accent:#d93025; /* rouge rappelant "erreur" */
+    --muted:#6b7280;
+    --google-blue: #1a73e8;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(180deg,#ffffff 0%, var(--bg) 100%);
+    color:#111827;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .container{
+    width:100%;
+    max-width:900px;
+    background:var(--card);
+    border-radius:12px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.08);
+    overflow:hidden;
+    border:1px solid rgba(15,23,42,0.04);
+  }
+  .header{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    padding:28px 36px;
+    border-bottom:1px solid rgba(15,23,42,0.04);
+  }
+  .logo {
+    font-weight:700;
+    font-size:28px;
+    letter-spacing:1px;
+    color:var(--google-blue);
+  }
+  .logo span{ color: var(--accent); }
+  .main{
+    display:flex;
+    gap:32px;
+    padding:36px;
+    align-items:flex-start;
+  }
+  .left{
+    flex:1.2;
+  }
+  .right{
+    flex:0.9;
+    background:#fbfbfd;
+    border-radius:10px;
+    padding:20px;
+    border:1px dashed rgba(15,23,42,0.04);
+    height:fit-content;
+  }
+  h1{
+    margin:0 0 12px 0;
+    font-size:22px;
+  }
+  p.lead{
+    margin:0 0 20px 0;
+    color:var(--muted);
+  }
+  .ban-bubble{
+    display:inline-block;
+    padding:8px 12px;
+    background: linear-gradient(90deg, rgba(217,48,37,0.08), rgba(217,48,37,0.02));
+    border-radius:999px;
+    color:var(--accent);
+    font-weight:600;
+    margin-bottom:18px;
+    border:1px solid rgba(217,48,37,0.12);
+  }
+  .meta{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:12px;
+  }
+  .appeal-btn, .not-ban-btn{
+    display:inline-block;
+    padding:10px 14px;
+    border-radius:8px;
+    border:0;
+    cursor:pointer;
+    font-weight:600;
+    margin-right:10px;
+    margin-top:10px;
+  }
+  .appeal-btn{
+    background:var(--google-blue);
+    color:white;
+  }
+  .not-ban-btn{
+    background:transparent;
+    color:var(--google-blue);
+    border:1px solid rgba(26,115,232,0.12);
+  }
+  .reason{
+    margin-top:16px;
+    padding:14px;
+    background:#fff6f6;
+    border-left:4px solid var(--accent);
+    border-radius:8px;
+    color:#7a1212;
+  }
+  .footer-note{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:16px;
+  }
+
+  /* small animations */
+  .glitch {
+    position:relative;
+    display:inline-block;
+    animation: shake 1.8s infinite;
+  }
+  @keyframes shake{
+    0%{transform:translateX(0)}
+    20%{transform:translateX(-1px)}
+    40%{transform:translateX(1px)}
+    60%{transform:translateX(-1px)}
+    80%{transform:translateX(1px)}
+    100%{transform:translateX(0)}
+  }
+
+  /* fake appeal modal */
+  .modal{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(2,6,23,0.45);
+    visibility:hidden;
+    opacity:0;
+    transition:opacity .18s, visibility .18s;
+    z-index:40;
+  }
+  .modal.open{visibility:visible; opacity:1}
+  .modal-card{
+    width:420px;
+    background:white;
+    border-radius:12px;
+    padding:18px;
+    box-shadow: 0 12px 40px rgba(2,6,23,0.28);
+    text-align:left;
+  }
+  .modal-card h3{margin:0 0 8px 0}
+  .modal-card p{margin:0 0 12px 0; color:var(--muted)}
+  .form-row{display:flex; gap:8px; margin-bottom:10px;}
+  input[type="text"], textarea{
+    width:100%;
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid #e6e9ef;
+    font-size:14px;
+  }
+  textarea{height:90px; resize:vertical}
+  .close, .submit{
+    padding:8px 12px;
+    border-radius:8px;
+    border:0;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .close{background:transparent; color:var(--muted); border:1px solid rgba(0,0,0,0.06)}
+  .submit{background:var(--google-blue); color:white}
+
+  /* playful badge */
+  .badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    background:linear-gradient(90deg,#eef2ff,#f0fdf4);
+    color:#374151;
+    font-weight:600;
+    font-size:13px;
+    margin-bottom:8px;
+  }
+
+  .footer{
+    padding:14px 18px;
+    background:linear-gradient(180deg,rgba(15,23,42,0.02),transparent);
+    font-size:13px;
+    color:var(--muted);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .hidden {
+    display:none;
+  }
+
+  /* small responsive */
+  @media (max-width:720px){
+    .main{flex-direction:column}
+    .right{order:2}
+  }
+</style>
+</head>
+<body>
+  <div class="container" role="main" aria-labelledby="title">
+    <div class="header">
+      <div class="logo" aria-hidden="true">
+        Goo<span>gle</span>
+      </div>
+      <div style="flex:1"></div>
+      <div style="color:var(--muted);font-size:13px">Compte: <strong>utilisateur@example.com</strong></div>
+    </div>
+
+    <div class="main">
+      <div class="left">
+        <div class="ban-bubble glitch">Suspension du compte — action requise</div>
+        <h1 id="title">Votre compte a été suspendu</h1>
+        <p class="lead">Nous avons détecté des activités qui violent nos Règles d'utilisation. L'accès à certains services a été restreint pour votre compte.</p>
+
+        <div class="reason">
+          <strong>Motif :</strong> Activité anormale détectée (accès automatisé et requêtes suspectes).<br>
+          <span class="meta">Dernière activité suspecte : <strong id="date">8 novembre 2025</strong></span>
+        </div>
+
+        <div class="meta">Vous pouvez faire appel de cette décision. Les appels sont examinés manuellement — cela peut prendre quelques minutes (ou jamais, c'est un troll 😜).</div>
+
+        <div style="margin-top:16px;">
+          <button class="appeal-btn" id="openAppeal">Faire appel</button>
+          <button class="not-ban-btn" id="reveal">Je ne suis pas banni</button>
+          <button class="not-ban-btn" id="consolePrank">Console joke</button>
+        </div>
+
+      </div>
+
+      <div class="right" aria-hidden="true">
+        <div class="badge">Détail du compte</div>
+        <div style="margin-top:10px">
+          <strong>Nom :</strong> Jean Dupont<br>
+          <strong>Email :</strong> utilisateur@example.com<br>
+          <strong>ID compte :</strong> <code>UID-9a8b7c6d</code><br>
+          <strong>Raison :</strong> Requêtes automatiques<br>
+          <div class="meta" style="margin-top:8px">Si vous pensez qu'il s'agit d'une erreur, cliquez sur <em>Faire appel</em>.</div>
+        </div>
+
+        <div class="footer-note">
+          Info : Ceci est une simulation. Google ne vous bannira pas pour avoir ouvert ce fichier.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>Besoin d'aide ? <a href="#" onclick="fakeHelp()">Centre d'aide</a></div>
+      <div>© Google LLC — Simulation</div>
+    </div>
+  </div>
+
+  <!-- Modal d'appel -->
+  <div class="modal" id="modal">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Formulaire d'appel</h3>
+      <p>Expliquez pourquoi votre compte ne devrait pas être suspendu.</p>
+      <input type="text" id="subject" placeholder="Objet (ex : Je suis innocent)" />
+      <textarea id="message" placeholder="Dites-nous ce qui s'est passé..."></textarea>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button class="close" id="closeModal">Annuler</button>
+        <button class="submit" id="submitAppeal">Envoyer l'appel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Met à jour la date affichée au moment de l'ouverture
+  (function(){
+    const d = new Date();
+    const months = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+    const txt = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} à ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    document.getElementById('date').textContent = txt;
+  })();
+
+  const modal = document.getElementById('modal');
+  document.getElementById('openAppeal').addEventListener('click', ()=>{
+    modal.classList.add('open');
+    document.getElementById('subject').focus();
+  });
+  document.getElementById('closeModal').addEventListener('click', ()=>{
+    modal.classList.remove('open');
+  });
+
+  document.getElementById('submitAppeal').addEventListener('click', ()=>{
+    // petit effet troll pendant 1.5s puis message final
+    const btn = document.getElementById('submitAppeal');
+    btn.disabled = true;
+    btn.textContent = 'Envoi en cours...';
+    setTimeout(()=>{
+      btn.textContent = 'Envoyer l\'appel';
+      btn.disabled = false;
+      modal.classList.remove('open');
+      // Message final qui trolle
+      alert("Appel reçu — après examen, décision : non réversible. Vous êtes trop drôle pour réintégration. 😂\n( Ceci est un troll )");
+    }, 1500);
+  });
+
+  // bouton "Je ne suis pas banni" : dévoile la vérité
+  document.getElementById('reveal').addEventListener('click', ()=>{
+    const left = document.querySelector('.left');
+    left.innerHTML = `
+      <div class="ban-bubble" style="background:#ecfdf5;border-left:4px solid #10b981;color:#065f46">Pssst — c'était une blague</div>
+      <h1>Tu n'es pas banni</h1>
+      <p class="lead">Bravo, tu as survécu à la simulation. Ferme cet onglet ou partage avec un ami pour troller !</p>
+      <div style="margin-top:14px;">
+        <button class="appeal-btn" onclick="location.reload()">Recharger la simulation</button>
+        <button class="not-ban-btn" onclick="copyPrank()">Copier le lien de prank</button>
+      </div>
+    `;
+  });
+
+  // console prank : écriture amusante dans la console
+  document.getElementById('consolePrank').addEventListener('click', ()=>{
+    console.log("%cAccès à la console : bien joué 👀", "color: white; background: #1a73e8; padding:6px; border-radius:6px");
+    console.log("Si tu veux troller plus : copie ce fichier et envoie-le à un ami 😈");
+    alert("Message pour développeurs affiché dans la console. Ouvre la console (F12) pour le voir.");
+  });
+
+  function fakeHelp(){
+    alert("Centre d'aide (factice) — Référence: https://support.google.com (simulation).");
+  }
+
+  function copyPrank(){
+    const txt = "Fichier prank: sauvegarde fake-google-ban.html et ouvre-le dans ton navigateur.";
+    navigator.clipboard?.writeText(txt).then(()=> alert("Instructions copiées !"));
+  }
+
+  // Petite mise en scène : affiche un message dans la console automatiquement (pour dev)
+  console.log("Simulation de suspension : ceci est une page de troll. Ne pas utiliser pour usurpation d'identité.");
+</script>
+</body>
+</html>
